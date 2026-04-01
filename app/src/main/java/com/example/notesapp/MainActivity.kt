@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         fab.setOnClickListener {
-            Toast.makeText(this, "Add Note Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AddNoteActivity::class.java)
+            startActivity(intent)
         }
     }
 }
