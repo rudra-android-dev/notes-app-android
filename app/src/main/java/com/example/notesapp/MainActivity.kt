@@ -85,4 +85,10 @@ class MainActivity : AppCompatActivity() {
             addNoteLauncher.launch(intent)
         }
     }
+    private fun deleteNote(position: Int) {
+        noteList.removeAt(position)
+        recyclerView.adapter?.notifyItemRemoved(position)
+
+        Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
+    }
 }
