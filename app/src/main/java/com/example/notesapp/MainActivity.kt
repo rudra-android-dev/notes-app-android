@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+const val EXTRA_TITLE = "extra_title"
+const val EXTRA_DESCRIPTION = "extra_description"
+const val EXTRA_POSITION = "extra_position"
+
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteList: ArrayList<Note>
@@ -66,9 +70,9 @@ class MainActivity : AppCompatActivity() {
                 val note = noteList[position]
 
                 val intent = Intent(this, AddNoteActivity::class.java)
-                intent.putExtra("title", note.title)
-                intent.putExtra("description", note.description)
-                intent.putExtra("position", position)
+                intent.putExtra(EXTRA_TITLE, note.title)
+                intent.putExtra(EXTRA_DESCRIPTION, note.description)
+                intent.putExtra(EXTRA_POSITION, position)
 
                 addNoteLauncher.launch(intent)
             },
