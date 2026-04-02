@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             val data = result.data
-            val title = data?.getStringExtra("title")
-            val description = data?.getStringExtra("description")
-            val position = data?.getIntExtra("position", -1)
+            val title = data?.getStringExtra(EXTRA_TITLE)
+            val description = data?.getStringExtra(EXTRA_DESCRIPTION)
+            val position = data?.getIntExtra(EXTRA_POSITION, -1)
 
             if (title != null && description != null) {
                 if (position != null && position != -1) {

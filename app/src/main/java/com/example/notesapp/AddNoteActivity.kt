@@ -23,15 +23,15 @@ class AddNoteActivity : AppCompatActivity() {
         val descEdit = findViewById<EditText>(R.id.editDescription)
         val saveBtn = findViewById<Button>(R.id.btnSave)
 
-        val receivedTitle = intent.getStringExtra("title")
-        val receivedDescription = intent.getStringExtra("description")
+        val receivedTitle = intent.getStringExtra(EXTRA_TITLE)
+        val receivedDescription = intent.getStringExtra(EXTRA_DESCRIPTION)
 
         if (receivedTitle != null && receivedDescription != null) {
             titleEdit.setText(receivedTitle)
             descEdit.setText(receivedDescription)
         }
 
-        val position = intent.getIntExtra("position", -1)
+        val position = intent.getIntExtra(EXTRA_POSITION, -1)
         val isEdit = position != -1
 
         saveBtn.setOnClickListener {
@@ -39,9 +39,9 @@ class AddNoteActivity : AppCompatActivity() {
             val description = descEdit.text.toString()
 
             val intent = Intent()
-            intent.putExtra("title", title)
-            intent.putExtra("description", description)
-            intent.putExtra("position", position)
+            intent.putExtra(EXTRA_TITLE,title)
+            intent.putExtra(EXTRA_DESCRIPTION,description)
+            intent.putExtra(EXTRA_POSITION, position)
 
             setResult(RESULT_OK, intent)
             finish()
