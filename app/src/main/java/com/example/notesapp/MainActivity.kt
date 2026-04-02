@@ -23,10 +23,18 @@ class MainActivity : AppCompatActivity() {
             val data = result.data
             val title = data?.getStringExtra("title")
             val description = data?.getStringExtra("description")
+            val position = data?.getIntExtra("position", -1)
 
             if (title != null && description != null) {
-                noteList.add(Note(title, description))
-                recyclerView.adapter?.notifyDataSetChanged()
+                if (position != null && position != -1) {
+                    // EDIT
+                    noteList[position] = Note(title, description)
+                    recyclerView.adapter?.notifyItemChanged(position)
+                } else {
+                    // NEW
+                    noteList.add(Note(title, description))
+                    recyclerView.adapter?.notifyItemInserted(noteList.size - 1)
+                }
             }
         }
     }
@@ -52,7 +60,23 @@ class MainActivity : AppCompatActivity() {
         noteList.add(Note("Meeting", "Project discussion at 3 PM"))
         noteList.add(Note("Call", "Call friend tonight"))
 
-        val adapter = NoteAdapter(noteList)
+        val adapter = NoteAdapter(
+            noteList,
+            onItemClick = { position ->
+                val note = noteList[position]
+
+                val intent = Intent(this, AddNoteActivity::class.java)
+                intent.putExtra("title", note.title)
+                intent.putExtra("description", note.description)
+                intent.putExtra("position", position)
+
+                addNoteLauncher.launch(intent)
+            },
+            onItemLongClick = { position ->
+                deleteNote(position)
+            }
+        )
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
