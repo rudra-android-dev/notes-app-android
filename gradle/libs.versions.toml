@@ -8,7 +8,7 @@ appcompat = "1.7.1"
 material = "1.13.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
-room = "2.6.1"
+room = "2.7.1"
 ksp = "2.0.21-1.0.28"
 
 [libraries]

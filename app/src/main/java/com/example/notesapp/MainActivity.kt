@@ -21,6 +21,7 @@ const val EXTRA_POSITION = "extra_position"
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteList: ArrayList<Note>
+    private lateinit var dao: NoteDao
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -33,13 +34,26 @@ class MainActivity : AppCompatActivity() {
 
             if (title != null && description != null) {
                 if (position != null && position != -1) {
-                    // EDIT
-                    noteList[position] = Note(title, description)
-                    recyclerView.adapter?.notifyItemChanged(position)
+                    lifecycleScope.launch {
+                        val updatedNote = Note(
+                            id = noteList[position].id,
+                            title = title,
+                            description = description
+                        )
+
+                        dao.update(updatedNote)
+
+                        noteList[position] = updatedNote
+                        recyclerView.adapter?.notifyItemChanged(position)
+                    }
                 } else {
-                    // NEW
-                    noteList.add(Note(title, description))
-                    recyclerView.adapter?.notifyItemInserted(noteList.size - 1)
+                    lifecycleScope.launch {
+                        val newNote = Note(title = title, description = description)
+                        dao.insert(newNote)
+
+                        noteList.add(newNote)
+                        recyclerView.adapter?.notifyItemInserted(noteList.size - 1)
+                    }
                 }
             }
         }
@@ -60,11 +74,11 @@ class MainActivity : AppCompatActivity() {
 
         noteList = ArrayList()
 
-        noteList.add(Note("Shopping", "Buy milk and eggs"))
-        noteList.add(Note("Workout", "Go to gym at 6 PM"))
-        noteList.add(Note("Study", "Revise Android basics"))
-        noteList.add(Note("Meeting", "Project discussion at 3 PM"))
-        noteList.add(Note("Call", "Call friend tonight"))
+        noteList.add(Note(title = "Shopping", description = "Buy milk and eggs"))
+        noteList.add(Note(title = "Workout", description = "Go to gym at 6 PM"))
+        noteList.add(Note(title = "Study", description = "Revise Android basics"))
+        noteList.add(Note(title = "Meeting", description = "Project discussion at 3 PM"))
+        noteList.add(Note(title = "Call", description = "Call friend tonight"))
 
         val adapter = NoteAdapter(
             noteList,
@@ -91,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             addNoteLauncher.launch(intent)
         }
         val db = NoteDatabase.getDatabase(this)
-        val dao = db.noteDao()
+        dao = db.noteDao()
 
         lifecycleScope.launch {
             val notes = dao.getAllNotes()
@@ -101,9 +115,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun deleteNote(position: Int) {
-        noteList.removeAt(position)
-        recyclerView.adapter?.notifyItemRemoved(position)
+        val note = noteList[position]
 
-        Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            dao.delete(note)
+
+            noteList.removeAt(position)
+            recyclerView.adapter?.notifyItemRemoved(position)
+
+            Toast.makeText(this@MainActivity, "Note Deleted", Toast.LENGTH_SHORT).show()
+        }
     }
 }
