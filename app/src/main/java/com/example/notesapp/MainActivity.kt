@@ -11,6 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 const val EXTRA_TITLE = "extra_title"
 const val EXTRA_DESCRIPTION = "extra_description"
@@ -87,6 +89,15 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
+        }
+        val db = NoteDatabase.getDatabase(this)
+        val dao = db.noteDao()
+
+        lifecycleScope.launch {
+            val notes = dao.getAllNotes()
+            noteList.clear()
+            noteList.addAll(notes)
+            recyclerView.adapter?.notifyDataSetChanged()
         }
     }
     private fun deleteNote(position: Int) {
