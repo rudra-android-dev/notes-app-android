@@ -8,52 +8,47 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 
 const val EXTRA_TITLE = "extra_title"
 const val EXTRA_DESCRIPTION = "extra_description"
 const val EXTRA_POSITION = "extra_position"
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteList: ArrayList<Note>
-    private lateinit var dao: NoteDao
+    private lateinit var viewModel: NoteViewModel
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
+
             val data = result.data
             val title = data?.getStringExtra(EXTRA_TITLE)
             val description = data?.getStringExtra(EXTRA_DESCRIPTION)
             val position = data?.getIntExtra(EXTRA_POSITION, -1)
 
             if (title != null && description != null) {
+
+                // 🔹 UPDATE
                 if (position != null && position != -1) {
-                    lifecycleScope.launch {
-                        val updatedNote = Note(
-                            id = noteList[position].id,
-                            title = title,
-                            description = description
-                        )
+                    val updatedNote = Note(
+                        id = noteList[position].id,
+                        title = title,
+                        description = description
+                    )
+                    viewModel.update(updatedNote)
+                }
 
-                        dao.update(updatedNote)
-
-                        noteList[position] = updatedNote
-                        recyclerView.adapter?.notifyItemChanged(position)
-                    }
-                } else {
-                    lifecycleScope.launch {
-                        val newNote = Note(title = title, description = description)
-                        dao.insert(newNote)
-
-                        noteList.add(newNote)
-                        recyclerView.adapter?.notifyItemInserted(noteList.size - 1)
-                    }
+                // 🔹 INSERT
+                else {
+                    val newNote = Note(title = title, description = description)
+                    viewModel.insert(newNote)
                 }
             }
         }
@@ -63,22 +58,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        // ✅ ViewModel init (correct place)
+        viewModel = ViewModelProvider(this)[NoteViewModel::class.java]
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        recyclerView = findViewById(R.id.recyclerView)
 
+        recyclerView = findViewById(R.id.recyclerView)
         val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
 
         noteList = ArrayList()
-
-        noteList.add(Note(title = "Shopping", description = "Buy milk and eggs"))
-        noteList.add(Note(title = "Workout", description = "Go to gym at 6 PM"))
-        noteList.add(Note(title = "Study", description = "Revise Android basics"))
-        noteList.add(Note(title = "Meeting", description = "Project discussion at 3 PM"))
-        noteList.add(Note(title = "Call", description = "Call friend tonight"))
 
         val adapter = NoteAdapter(
             noteList,
@@ -104,26 +97,20 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
         }
-        val db = NoteDatabase.getDatabase(this)
-        dao = db.noteDao()
 
-        lifecycleScope.launch {
-            val notes = dao.getAllNotes()
+        // ✅ OBSERVE DATA (this replaces ALL manual updates)
+        viewModel.allNotes.observe(this) { notes ->
             noteList.clear()
             noteList.addAll(notes)
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }
+
+    // 🔹 DELETE
     private fun deleteNote(position: Int) {
         val note = noteList[position]
+        viewModel.delete(note)
 
-        lifecycleScope.launch {
-            dao.delete(note)
-
-            noteList.removeAt(position)
-            recyclerView.adapter?.notifyItemRemoved(position)
-
-            Toast.makeText(this@MainActivity, "Note Deleted", Toast.LENGTH_SHORT).show()
-        }
+        Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
     }
 }
