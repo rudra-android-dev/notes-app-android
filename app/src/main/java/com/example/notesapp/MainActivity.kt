@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -143,5 +145,25 @@ class MainActivity : AppCompatActivity() {
         noteList.clear()
         noteList.addAll(filteredList)
         recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.sort_az -> {
+                noteList.sortBy { it.title }
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+
+            R.id.sort_za -> {
+                noteList.sortByDescending { it.title }
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+        }
+        return true
     }
 }
