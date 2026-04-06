@@ -2,6 +2,9 @@ package com.example.notesapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteList: ArrayList<Note>
     private lateinit var viewModel: NoteViewModel
+
+    private lateinit var searchEditText: EditText
+    private var fullList: List<Note> = listOf()
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -100,10 +106,24 @@ class MainActivity : AppCompatActivity() {
 
         // ✅ OBSERVE DATA (this replaces ALL manual updates)
         viewModel.allNotes.observe(this) { notes ->
+            fullList = notes   // 🔥 store original list
+
             noteList.clear()
             noteList.addAll(notes)
             recyclerView.adapter?.notifyDataSetChanged()
         }
+
+        searchEditText = findViewById(R.id.searchEditText)
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterNotes(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     // 🔹 DELETE
@@ -112,5 +132,16 @@ class MainActivity : AppCompatActivity() {
         viewModel.delete(note)
 
         Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun filterNotes(query: String) {
+        val filteredList = fullList.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                    it.description.contains(query, ignoreCase = true)
+        }
+
+        noteList.clear()
+        noteList.addAll(filteredList)
+        recyclerView.adapter?.notifyDataSetChanged()
     }
 }
