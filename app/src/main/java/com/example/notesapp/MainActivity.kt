@@ -6,7 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var searchEditText: EditText
     private var fullList: List<Note> = listOf()
+
+    private lateinit var emptyText: TextView
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -66,6 +70,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        emptyText = findViewById(R.id.emptyText)
 
         // ✅ ViewModel init (correct place)
         viewModel = ViewModelProvider(this)[NoteViewModel::class.java]
@@ -108,11 +114,18 @@ class MainActivity : AppCompatActivity() {
 
         // ✅ OBSERVE DATA (this replaces ALL manual updates)
         viewModel.allNotes.observe(this) { notes ->
-            fullList = notes   // 🔥 store original list
+            fullList = notes
 
             noteList.clear()
             noteList.addAll(notes)
-            recyclerView.adapter?.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
+
+            // 👇 THIS PART
+            if (notes.isEmpty()) {
+                emptyText.visibility = View.VISIBLE
+            } else {
+                emptyText.visibility = View.GONE
+            }
         }
 
         searchEditText = findViewById(R.id.searchEditText)
