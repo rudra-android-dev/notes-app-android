@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.view.animation.AnimationUtils
 
 const val EXTRA_TITLE = "extra_title"
 const val EXTRA_DESCRIPTION = "extra_description"
@@ -128,9 +129,14 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        recyclerView.layoutAnimation =
+            AnimationUtils.loadLayoutAnimation(this, android.R.anim.slide_in_left)
+
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
+
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
         // ✅ OBSERVE DATA (this replaces ALL manual updates)
@@ -140,6 +146,8 @@ class MainActivity : AppCompatActivity() {
             noteList.clear()
             noteList.addAll(notes)
             adapter.notifyDataSetChanged()
+
+            recyclerView.scheduleLayoutAnimation()
 
             // 👇 THIS PART
             if (notes.isEmpty()) {

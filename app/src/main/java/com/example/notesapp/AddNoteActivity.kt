@@ -45,6 +45,8 @@ class AddNoteActivity : AppCompatActivity() {
 
             setResult(RESULT_OK, intent)
             finish()
+
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
 }
