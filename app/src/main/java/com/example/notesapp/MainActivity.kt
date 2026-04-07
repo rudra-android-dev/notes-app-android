@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
 
             if (title != null && description != null) {
 
-                // 🔹 UPDATE
                 if (position != null && position != -1) {
                     val updatedNote = Note(
                         id = noteList[position].id,
@@ -57,10 +56,7 @@ class MainActivity : AppCompatActivity() {
                         description = description
                     )
                     viewModel.update(updatedNote)
-                }
-
-                // 🔹 INSERT
-                else {
+                } else {
                     val newNote = Note(title = title, description = description)
                     viewModel.insert(newNote)
                 }
@@ -75,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         emptyText = findViewById(R.id.emptyText)
 
-        // ✅ ViewModel init (correct place)
         viewModel = ViewModelProvider(this)[NoteViewModel::class.java]
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -100,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_POSITION, position)
 
                 addNoteLauncher.launch(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             },
             onItemLongClick = { position ->
                 deleteNote(position)
@@ -135,11 +131,9 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
-
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
-        // ✅ OBSERVE DATA (this replaces ALL manual updates)
         viewModel.allNotes.observe(this) { notes ->
             fullList = notes
 
@@ -149,12 +143,7 @@ class MainActivity : AppCompatActivity() {
 
             recyclerView.scheduleLayoutAnimation()
 
-            // 👇 THIS PART
-            if (notes.isEmpty()) {
-                emptyText.visibility = View.VISIBLE
-            } else {
-                emptyText.visibility = View.GONE
-            }
+            emptyText.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
         }
 
         searchEditText = findViewById(R.id.searchEditText)
@@ -170,11 +159,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // 🔹 DELETE
     private fun deleteNote(position: Int) {
         val note = noteList[position]
         viewModel.delete(note)
-
         Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
     }
 
