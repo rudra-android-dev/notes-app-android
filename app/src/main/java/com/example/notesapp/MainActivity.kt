@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         recyclerView.layoutAnimation =
-            AnimationUtils.loadLayoutAnimation(this, android.R.anim.slide_in_left)
+            AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation)
 
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
