@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private var fullList: List<Note> = listOf()
 
-    private lateinit var emptyLayout: TextView
+    private lateinit var emptyLayout: View
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
