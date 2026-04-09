@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NoteAdapter(
     private val noteList: ArrayList<Note>,
@@ -15,6 +17,7 @@ class NoteAdapter(
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.noteTitle)
         val description: TextView = itemView.findViewById(R.id.noteDescription)
+        val time: TextView = itemView.findViewById(R.id.noteTime)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -27,6 +30,9 @@ class NoteAdapter(
         val note = noteList[position]
         holder.title.text = note.title
         holder.description.text = note.description
+
+        val sdf = SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault())
+        holder.time.text = sdf.format(Date(note.timestamp))
 
         holder.itemView.setOnClickListener {
             onItemClick(position)
