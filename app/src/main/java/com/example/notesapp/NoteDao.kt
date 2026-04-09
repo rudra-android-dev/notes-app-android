@@ -16,4 +16,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes")
     suspend fun getAllNotes(): List<Note>
+
+    @Query("SELECT * FROM notes WHERE title LIKE :query OR description LIKE :query")
+    suspend fun searchNotes(query: String): List<Note>
 }

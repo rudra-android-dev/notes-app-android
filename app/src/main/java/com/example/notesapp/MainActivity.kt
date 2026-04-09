@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import com.google.android.material.snackbar.Snackbar
 
 const val EXTRA_TITLE = "extra_title"
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private var fullList: List<Note> = listOf()
 
-    private lateinit var emptyText: TextView
+    private lateinit var emptyLayout: TextView
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        emptyText = findViewById(R.id.emptyText)
+        emptyLayout = findViewById(R.id.emptyLayout)
 
         viewModel = ViewModelProvider(this)[NoteViewModel::class.java]
 
@@ -118,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
                     viewModel.delete(deletedNote)
 
-                    Snackbar.make(recyclerView, "Note Deleted", Snackbar.LENGTH_LONG)
+                    Snackbar.make(recyclerView, getString(R.string.note_deleted), Snackbar.LENGTH_LONG)
                         .setAction("UNDO") {
                             viewModel.insert(deletedNote)
                         }
@@ -150,7 +151,11 @@ class MainActivity : AppCompatActivity() {
 
             recyclerView.scheduleLayoutAnimation()
 
-            emptyText.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
+            if (notes.isEmpty()) {
+                emptyLayout.visibility = View.VISIBLE
+            } else {
+                emptyLayout.visibility = View.GONE
+            }
         }
 
         searchEditText = findViewById(R.id.searchEditText)
@@ -159,7 +164,7 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterNotes(s.toString())
+                viewModel.search(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -170,17 +175,6 @@ class MainActivity : AppCompatActivity() {
         val note = noteList[position]
         viewModel.delete(note)
         Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun filterNotes(query: String) {
-        val filteredList = fullList.filter {
-            it.title.contains(query, ignoreCase = true) ||
-                    it.description.contains(query, ignoreCase = true)
-        }
-
-        noteList.clear()
-        noteList.addAll(filteredList)
-        recyclerView.adapter?.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

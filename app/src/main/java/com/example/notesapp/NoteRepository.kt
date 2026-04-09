@@ -9,4 +9,6 @@ class NoteRepository(private val dao: NoteDao) {
     suspend fun delete(note: Note) = dao.delete(note)
 
     suspend fun getAllNotes(): List<Note> = dao.getAllNotes()
+
+    suspend fun searchNotes(query: String) = dao.searchNotes(query)
 }

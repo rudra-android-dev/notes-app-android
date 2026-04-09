@@ -34,4 +34,12 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         repository.delete(note)
         loadNotes()
     }
+
+    fun search(query: String) = viewModelScope.launch {
+        if (query.isEmpty()) {
+            allNotes.value = repository.getAllNotes()
+        } else {
+            allNotes.value = repository.searchNotes("%$query%")
+        }
+    }
 }

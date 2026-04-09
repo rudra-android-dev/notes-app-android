@@ -13,7 +13,7 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Notes"
+        android:text="@string/title_notes"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="24dp"
@@ -26,7 +26,7 @@
         android:id="@+id/searchEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Search notes..."
+        android:hint="@string/search_hint"
         android:padding="12dp"
         android:background="@android:drawable/edit_text"
         android:layout_margin="16dp"
@@ -46,24 +46,41 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Shifted to center of the screen for better UX -->
-    <TextView
-        android:id="@+id/emptyText"
+    <LinearLayout
+        android:id="@+id/emptyLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Notes Yet"
-        android:textSize="18sp"
+        android:orientation="vertical"
+        android:gravity="center"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchEditText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:alpha="0.5"
+            android:src="@android:drawable/ic_menu_edit"
+            app:tint="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_notes_found"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp"
+            android:layout_marginTop="12dp"/>
+    </LinearLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:contentDescription="Add Note"
+        android:contentDescription="@string/add_note_desc"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
