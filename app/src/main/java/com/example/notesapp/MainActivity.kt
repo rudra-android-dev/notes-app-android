@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.animation.AnimationUtils
+import com.google.android.material.snackbar.Snackbar
 
 const val EXTRA_TITLE = "extra_title"
 const val EXTRA_DESCRIPTION = "extra_description"
@@ -112,10 +113,16 @@ class MainActivity : AppCompatActivity() {
                 ) = false
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val note = noteList[viewHolder.adapterPosition]
-                    viewModel.delete(note)
+                    val position = viewHolder.adapterPosition
+                    val deletedNote = noteList[position]
 
-                    Toast.makeText(this@MainActivity, "Note Deleted", Toast.LENGTH_SHORT).show()
+                    viewModel.delete(deletedNote)
+
+                    Snackbar.make(recyclerView, "Note Deleted", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO") {
+                            viewModel.insert(deletedNote)
+                        }
+                        .show()
                 }
             }
         )
