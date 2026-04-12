@@ -11,7 +11,6 @@ import java.util.*
 class NoteAdapter(
     private val noteList: ArrayList<Note>,
     private val onItemClick: (position: Int) -> Unit,
-    private val onItemLongClick: (position: Int) -> Unit
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,11 +35,6 @@ class NoteAdapter(
 
         holder.itemView.setOnClickListener {
             onItemClick(position)
-        }
-
-        holder.itemView.setOnLongClickListener {
-            onItemLongClick(position)
-            true
         }
     }
 

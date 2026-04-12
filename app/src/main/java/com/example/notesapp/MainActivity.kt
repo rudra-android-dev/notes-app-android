@@ -1,6 +1,7 @@
 package com.example.notesapp
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,8 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
 import com.google.android.material.snackbar.Snackbar
 
 const val EXTRA_TITLE = "extra_title"
@@ -35,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: NoteViewModel
 
     private lateinit var searchEditText: EditText
-    private var fullList: List<Note> = listOf()
 
     private lateinit var emptyLayout: View
 
@@ -97,10 +94,19 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_POSITION, position)
 
                 addNoteLauncher.launch(intent)
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            },
-            onItemLongClick = { position ->
-                deleteNote(position)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    overrideActivityTransition(
+                        OVERRIDE_TRANSITION_OPEN,
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                    )
+                }
             }
         )
 
@@ -114,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                 ) = false
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
+                    val position = viewHolder.bindingAdapterPosition
                     val deletedNote = noteList[position]
 
                     viewModel.delete(deletedNote)
@@ -139,11 +145,22 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(
+                    OVERRIDE_TRANSITION_OPEN,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            }
         }
 
         viewModel.allNotes.observe(this) { notes ->
-            fullList = notes
 
             noteList.clear()
             noteList.addAll(notes)
@@ -169,12 +186,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
-
-    private fun deleteNote(position: Int) {
-        val note = noteList[position]
-        viewModel.delete(note)
-        Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -32,7 +32,6 @@ class AddNoteActivity : AppCompatActivity() {
         }
 
         val position = intent.getIntExtra(EXTRA_POSITION, -1)
-        val isEdit = position != -1
 
         saveBtn.setOnClickListener {
             val title = titleEdit.text.toString()
@@ -43,10 +42,16 @@ class AddNoteActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_DESCRIPTION,description)
             intent.putExtra(EXTRA_POSITION, position)
 
+
             setResult(RESULT_OK, intent)
             finish()
 
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, android.R.anim.fade_in, android.R.anim.fade_out)
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
         }
     }
 }
