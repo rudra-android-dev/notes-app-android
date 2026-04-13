@@ -27,6 +27,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/search_hint"
+        android:inputType="text"
+        android:autofillHints="search"
         android:padding="12dp"
         android:background="@android:drawable/edit_text"
         android:layout_margin="16dp"
