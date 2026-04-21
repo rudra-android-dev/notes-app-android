@@ -14,6 +14,7 @@
 
         <activity
             android:name=".SplashActivity"
+            android:exported="true"
             android:theme="@style/Theme.NotesApp.Splash">
 
             <intent-filter>
