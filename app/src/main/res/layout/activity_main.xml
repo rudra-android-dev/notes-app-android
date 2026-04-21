@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Title stays at top left -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- Shifted BELOW titleText -->
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="0dp"
@@ -36,7 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- RecyclerView now starts below Search -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
@@ -47,7 +44,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Shifted to center of the screen for better UX -->
     <LinearLayout
         android:id="@+id/emptyLayout"
         android:layout_width="wrap_content"

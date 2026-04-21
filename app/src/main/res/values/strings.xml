@@ -10,4 +10,5 @@
     <string name="add_note_desc">Add Note</string>
     <string name="sort_az">Sort A-Z</string>
     <string name="sort_za">Sort Z-A</string>
+    <string name="subtitle">Organize your thoughts</string>
 </resources>
