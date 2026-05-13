@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.text.Editable
+import android.text.TextWatcher
 
 class AddNoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +24,23 @@ class AddNoteActivity : AppCompatActivity() {
         val titleEdit = findViewById<EditText>(R.id.editTitle)
         val descEdit = findViewById<EditText>(R.id.editDescription)
         val saveBtn = findViewById<Button>(R.id.btnSave)
+        saveBtn.isEnabled = false
+
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val titleText = titleEdit.text.toString().trim()
+                val descriptionText = descEdit.text.toString().trim()
+
+                saveBtn.isEnabled = titleText.isNotEmpty() || descriptionText.isNotEmpty()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+
+        titleEdit.addTextChangedListener(watcher)
+        descEdit.addTextChangedListener(watcher)
 
         val receivedTitle = intent.getStringExtra(EXTRA_TITLE)
         val receivedDescription = intent.getStringExtra(EXTRA_DESCRIPTION)
