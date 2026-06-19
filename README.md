@@ -41,6 +41,7 @@ NoteDao (Room DAO)
 NoteDatabase (SQLite via Room)
 
 ## Project Structure
+```
 com.example.notesapp
 ├── Note.kt              → Room Entity
 ├── NoteDao.kt           → Database queries (insert, update, delete, search)
@@ -51,6 +52,7 @@ com.example.notesapp
 ├── MainActivity.kt      → Note list, search, sort, swipe-to-delete
 ├── AddNoteActivity.kt   → Add and edit notes
 └── SplashActivity.kt    → 1.5s splash screen
+```
 
 ## Installation
 1. Clone the repo
