@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="splash_background">#121212</color>
-    <color name="splash_text">#FFFFFF</color>
+    <color name="splash_background">#1C1B1F</color>
+    <color name="splash_text">#E6E1E5</color>
+    <color name="splash_subtitle">#D0BCFF</color>
+
+    <color name="note_accent_1">#D0BCFF</color>
+    <color name="note_accent_2">#FFB3B3</color>
+    <color name="note_accent_3">#4FD8EB</color>
+    <color name="note_accent_4">#FFBA08</color>
+    <color name="note_accent_5">#90CAF9</color>
 </resources>

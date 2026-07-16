@@ -8,7 +8,7 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
+import android.view.animation.AnimationUtils
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,9 +18,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import android.view.animation.AnimationUtils
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 
 const val EXTRA_TITLE = "extra_title"
 const val EXTRA_DESCRIPTION = "extra_description"
@@ -31,23 +31,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteList: ArrayList<Note>
     private lateinit var viewModel: NoteViewModel
-
-    private lateinit var searchEditText: EditText
-
+    private lateinit var searchEditText: TextInputEditText
     private lateinit var emptyLayout: View
 
     private val addNoteLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-
             val data = result.data
             val title = data?.getStringExtra(EXTRA_TITLE)
             val description = data?.getStringExtra(EXTRA_DESCRIPTION)
             val position = data?.getIntExtra(EXTRA_POSITION, -1)
 
             if (title != null && description != null) {
-
                 if (position != null && position != -1) {
                     val updatedNote = Note(
                         id = noteList[position].id,
@@ -69,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         emptyLayout = findViewById(R.id.emptyLayout)
-
         viewModel = ViewModelProvider(this)[NoteViewModel::class.java]
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -79,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
+        val fab = findViewById<ExtendedFloatingActionButton>(R.id.fabAdd)
 
         noteList = ArrayList()
 
@@ -87,26 +82,12 @@ class MainActivity : AppCompatActivity() {
             noteList,
             onItemClick = { position ->
                 val note = noteList[position]
-
                 val intent = Intent(this, AddNoteActivity::class.java)
                 intent.putExtra(EXTRA_TITLE, note.title)
                 intent.putExtra(EXTRA_DESCRIPTION, note.description)
                 intent.putExtra(EXTRA_POSITION, position)
-
                 addNoteLauncher.launch(intent)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    overrideActivityTransition(
-                        OVERRIDE_TRANSITION_OPEN,
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    overridePendingTransition(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out
-                    )
-                }
+                applyTransitionOpen()
             }
         )
 
@@ -138,54 +119,51 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        recyclerView.layoutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation)
 
-        recyclerView.layoutAnimation =
-            AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation)
+        // Collapse FAB text when scrolling down, extend when at top
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 8) fab.shrink() else if (dy < -8) fab.extend()
+            }
+        })
 
         fab.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             addNoteLauncher.launch(intent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(
-                    OVERRIDE_TRANSITION_OPEN,
-                    android.R.anim.fade_in,
-                    android.R.anim.fade_out
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                overridePendingTransition(
-                    android.R.anim.fade_in,
-                    android.R.anim.fade_out
-                )
-            }
+            applyTransitionOpen()
         }
 
         viewModel.allNotes.observe(this) { notes ->
-
             noteList.clear()
             noteList.addAll(notes)
             adapter.notifyDataSetChanged()
-
             recyclerView.scheduleLayoutAnimation()
 
-            if (notes.isEmpty()) {
-                emptyLayout.visibility = View.VISIBLE
-            } else {
-                emptyLayout.visibility = View.GONE
-            }
+            emptyLayout.visibility = if (notes.isEmpty()) View.VISIBLE else View.GONE
         }
 
         searchEditText = findViewById(R.id.searchEditText)
-
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.search(s.toString())
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    private fun applyTransitionOpen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(
+                OVERRIDE_TRANSITION_OPEN,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -199,7 +177,6 @@ class MainActivity : AppCompatActivity() {
                 noteList.sortBy { it.title }
                 recyclerView.adapter?.notifyDataSetChanged()
             }
-
             R.id.sort_za -> {
                 noteList.sortByDescending { it.title }
                 recyclerView.adapter?.notifyDataSetChanged()

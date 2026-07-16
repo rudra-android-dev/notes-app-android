@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,19 +8,18 @@
     android:layout_marginVertical="6dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="?attr/colorSurface">
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="?attr/colorSurfaceVariant">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <View
             android:id="@+id/colorIndicator"
-            android:layout_width="6dp"
+            android:layout_width="5dp"
             android:layout_height="0dp"
             android:background="?attr/colorPrimary"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,16 +31,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
+            android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/colorIndicator"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/noteDescription"
@@ -50,26 +49,26 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif"
             android:maxLines="2"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="14sp"
+            android:textSize="13sp"
+            android:lineSpacingMultiplier="1.3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/noteTitle"
-            app:layout_constraintTop_toBottomOf="@id/noteTitle" />
+            app:layout_constraintTop_toBottomOf="@id/noteTitle"/>
 
         <TextView
             android:id="@+id/noteTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif-light"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="12sp"
+            android:textColor="?attr/colorOutline"
+            android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/noteTitle"
-            app:layout_constraintTop_toBottomOf="@id/noteDescription" />
+            app:layout_constraintTop_toBottomOf="@id/noteDescription"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
