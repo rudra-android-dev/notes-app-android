@@ -3,7 +3,12 @@
 A modern Android note-taking app built with Kotlin, following MVVM architecture 
 with local data persistence using Room Database.
 
-## Screenshots
+## 📸 Screenshots
+
+| Splash Screen | Add Post | Main Feed |
+|---------------|----------|-----------|
+| <img src="screenshots/splash.jpeg" width="300"> | <img src="screenshots/add.jpeg" width="300"> | <img src="screenshots/main.jpeg" width="300"> |
+
 
 
 
